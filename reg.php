@@ -1,13 +1,13 @@
 <?php
+//создаем массив ошибок
+$errors = array ();
 
 if ( isset($_POST["doAuth"]) ) {
 
     if ($_POST["password"] !== $_POST["password_2"]) {
-        echo "<div style='color: red'>Повторный пароль введен не верно</div><hr>";
+        $errors[] = "Повторный пароль введен не верно";
     } else {
         $email = $_POST["email"];
-        //создаем массив ошибок
-        $errors = array ();
         //шифруем пароль
         $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
         //формируем строку для записи
@@ -34,23 +34,16 @@ if ( isset($_POST["doAuth"]) ) {
         //регистрируем в базе если массив ошибок пуст
         if (empty($errors)) {
             //записываем данные в файл
-            $write = fwrite($content, $data);
-            if ($write === false) {
-                echo "<div style='color: red'>Ошибка записи</div><hr>";
-            } else {
-                echo "<div style='color: green'>Вы зарегистрированы</div><hr>";
+            $write = @fwrite($content, $data);
+            if ($write == false) {
+                $errors[] = "Ошибка записи";
             }
-        } else {
-            //показываем первый элемент массива ошибок
-            echo "<div style='color: red'>".array_shift($errors)."</div><hr>";
         }
         //закрываем файл secrets.txt
         fclose($content);
     }
 }
-
 ?>
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -58,6 +51,17 @@ if ( isset($_POST["doAuth"]) ) {
         <meta charset="utf-8">
     </head>
     <body>
+    <?php
+    if ( isset($_POST["doAuth"]) ) {
+        if (empty($errors)) {
+            //отображаем успех
+            echo "<div style='color: green'>Вы зарегистрированы</div><hr>\n";
+        } else {
+            //потображаем первый элемент массива ошибок
+            echo "<div style='color: red'>" . array_shift($errors) . "</div><hr>\n";
+        }
+    }
+    ?>
         <form method="POST">
             <p>
                 <label>

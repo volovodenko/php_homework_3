@@ -1,11 +1,10 @@
 <?php
+//создаем массив ошибок
+$errors = array ();
 
 if ( isset($_POST["doLogin"]) ) {
-
         $email = $_POST["email"];
         $password = $_POST["password"];
-        //создаем массив ошибок
-        $errors = array ();
 
         //создаем (открываем для чтения и записи) файл secrets.txt
         if (!file_exists("secrets.txt")) {
@@ -37,18 +36,8 @@ if ( isset($_POST["doLogin"]) ) {
             //закрываем файл secrets.txt
             fclose($content);
         }
-
-        //выдаем запись входа или ошибку
-        if (empty($errors)) {
-            echo "<div style='color: green'>Вход выполнен</div><hr>";
-        } else {
-            //показываем первый элемент массива ошибок
-            echo "<div style='color: red'>".array_shift($errors)."</div><hr>";
-        }
 }
-
 ?>
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -56,6 +45,17 @@ if ( isset($_POST["doLogin"]) ) {
         <meta charset="utf-8">
     </head>
     <body>
+    <?php
+        if ( isset($_POST["doLogin"]) ) {
+            //выдаем запись входа или ошибку
+            if (empty($errors)) {
+                echo "<div style='color: green'>Вход выполнен</div><hr>\n";
+            } else {
+                //показываем первый элемент массива ошибок
+                echo "<div style='color: red'>" . array_shift($errors) . "</div><hr>\n";
+            }
+        }
+    ?>
         <form method="POST">
             <p>
                 <label>
